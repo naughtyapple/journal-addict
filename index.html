@@ -1,26 +1,199 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Journal Addict</title>
-</head>
+<title>Journal Addict</title> 
+<meta name= "viewport" content="width=device-width, initial-scale=1.0
+  </head>
+
 <body>
- <h1>Journal Addict 📓</h1>
-<p>Your personal space for journaling, goals, mini games, and favorites.</p>
 
-<h2>📝 Journal</h2>
-<textarea rows="5" cols="40" placeholder="Write your thoughts..."></textarea>
+<div class="app">
+  <header>
+    <h1>📓 Journal Addict</h1>
+    <p class="subtitle">Your private space. Animated. Alive.</p>
+  </header>
 
-<h2>🎯 Goals</h2>
-<ul>
-  <li>Drink more water</li>
-  <li>Finish homework</li>
-  <li>Practice coding</li>
-</ul>
+  <nav>
+    <button onclick="show('write')">✍️ Write</button>
+    <button onclick="show('entries')">📚 Entries</button>
+    <button onclick="show('goals')">🎯 Goals</button>
+  </nav>
 
-<h2>⭐ Favorites</h2>
-<p>Movies, songs, restaurants, memes</p>
+  <!-- WRITE -->
+  <section id="write" class="page">
+    <input id="title" placeholder="Title..." />
+    <select id="mood">
+      <option>⚡️ Locked</option>
+      <option>🔥 Hype</option>
+      <option>😌 Chill</option>
+      <option>💔 Sad</option>
+    </select>
+    <input id="location" placeholder="📍 Location (optional)" />
+    <textarea id="text" placeholder="Write whatever you want..."></textarea>
+    <button class="save" onclick="saveEntry()">💾 Save Entry</button>
+  </section>
+
+  <!-- ENTRIES -->
+  <section id="entries" class="page hidden">
+    <h2>Your Entries</h2>
+    <div id="list"></div>
+  </section>
+
+  <!-- GOALS -->
+  <section id="goals" class="page hidden">
+    <input id="goalInput" placeholder="New goal..." />
+    <button onclick="addGoal()">Add</button>
+    <ul id="goalList"></ul>
+  </section>
+</div>
+
+<style>
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #1b1b3a, #0b0b12);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    color: white;
+    animation: fadeIn 1s ease;
+  }
+
+  .app {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    animation: slideDown 0.8s ease;
+  }
+
+  nav {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  nav button {
+    background: #2a2a55;
+    border: none;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .page {
+    animation: pop 0.4s ease;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #121225;
+    color: white;
+  }
+
+  textarea {
+    min-height: 150px;
+  }
+
+  .save {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c5cff, #24d6ff);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .entry {
+    background: #15152b;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 10px 0;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from {opacity:0}
+    to {opacity:1}
+  }
+
+  @keyframes slideDown {
+    from {opacity:0; transform:translateY(-20px)}
+    to {opacity:1; transform:translateY(0)}
+  }
+
+  @keyframes pop {
+    from {opacity:0; transform:scale(.95)}
+    to {opacity:1; transform:scale(1)}
+  }
+</style>
 
 <script>
+  const pages = document.querySelectorAll('.page');
+  const list = document.getElementById('list');
+  let entries = JSON.parse(localStorage.getItem('entries') || '[]');
+
+  function show(id) {
+    pages.forEach(p => p.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if (id === 'entries') render();
+  }
+
+  function saveEntry() {
+    const entry = {
+      title: title.value || 'Untitled',
+      mood: mood.value,
+      location: location.value,
+      text: text.value,
+      time: new Date().toLocaleString()
+    };
+    entries.unshift(entry);
+    localStorage.setItem('entries', JSON.stringify(entries));
+    text.value = '';
+    alert('Saved ⚡️');
+  }
+
+  function render() {
+    list.innerHTML = '';
+    entries.forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'entry';
+      div.innerHTML = `<strong>${e.title}</strong><br>${e.mood} • ${e.time}<br>${e.text}`;
+      list.appendChild(div);
+    });
+  }
+
+  function addGoal() {
+    const li = document.createElement('li');
+    li.textContent = goalInput.value;
+    goalList.appendChild(li);
+    goalInput.value = '';
+  }
+</script>
+
+
+
+ 
+  
+
+
+
+
+
+
   document.querySelectorAll("h1, h2, p, textarea, li, button").forEach((el, i) => {
     el.style.opacity = "0";
     el.style.transform = "translateY(20px)";
